@@ -7,12 +7,14 @@ import random
 pg.init()
 font =pg.font.Font('maple.ttf', 20)
 talk_data = pd.read_csv('대사집.csv', encoding='CP949')
+talk_data= talk_data.replace(np.nan, 0) 
 
 
 dark = pg.image.load("dark_500_500.png")
 status_button_img = pg.image.load("see_status.png")
 talk_button_img = pg.image.load("talk.png")
 plan_button_img = pg.image.load("make_plan.png")
+save_button_img = pg.image.load("save.png")
 base_window = pg.image.load("base_window.png")
 close_button = pg.image.load("close_button.png")
 text_window = pg.image.load("white_460_110.png")
@@ -72,6 +74,7 @@ class window_making(icon_making):
         close.blit()
 class data_making():
     def __init__(self):
+        self.day = 1
         self.hp = 10
         self.strength = 5
         self.tec = 5
@@ -84,7 +87,14 @@ def board_start():
     status_button.blit()
     plan_button.blit()
     talk_button.blit()
+    save_button.blit()
+    dd = pg.font.Font('maple.ttf', 40)
+    day = dd.render("DAY "+str(data.day),True,(255,255,255))
+    board.blit(day,(330,240))
+
+    
 def status_window_open():
+    board_start()
     white_window.blit()
     name = font.render("상태창",True,(255,255,255))
     hp = font.render("HP: "+str(data.hp),True,(0,0,0))
@@ -98,6 +108,14 @@ def status_window_open():
     board.blit(tec,(40,100))
     board.blit(stress,(40,120))
     board.blit(dung,(40,140))
+
+def make_plan():
+    white_window.blit()
+    blit_text(board, "3개 일정을 전부 체크하여 일정을 짜자.", font)
+    name = font.render("일정표",True,(255,255,255))
+def save_window():
+    white_window.blit()
+
 def talk_with_wiki():
     global talk
     if data.dung<30:
@@ -107,6 +125,7 @@ def talk_with_wiki():
     else:
         xx = list_talk("30_80")
     xx= random.choice(xx)
+    board_start()
     blit_text(board, xx, font)
     talk = True
     
@@ -115,12 +134,16 @@ def close_window():
     del buttons[-1]
     board_start()
 data = data_making()
+
 status_button= icon_making(status_button_img, (330,20))
 plan_button= icon_making(plan_button_img, (330,70))
 talk_button= icon_making(talk_button_img, (330,120))
+save_button= icon_making(save_button_img, (330,170))
 
 status_button.event = status_window_open
+plan_button.event = make_plan
 talk_button.event = talk_with_wiki
+save_button.event = save_window
 
 white_window = window_making(base_window, (20,20))
   
@@ -129,11 +152,12 @@ board_start()
 update()
 text = []
 talk = False
-buttons =[status_button, talk_button, plan_button]
+buttons =[status_button, talk_button, plan_button, save_button]
             
 while True:
     for event in pg.event.get():
         if event.type == pg.MOUSEBUTTONDOWN:
+
             if talk == True:
                 if text==[]:
                     board_start()
