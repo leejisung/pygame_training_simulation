@@ -45,7 +45,10 @@ board.blit(dark,(0,0))
 pg.display.update()
 
 def update():
+    global plan_click
     pg.display.update()
+    plan_click=0
+
 
 def list_talk(name): 
     talk= list(talk_data[name]) 
@@ -95,6 +98,7 @@ class window_making(icon_making):
         
 class plan_icon_making():
     global plan
+    global plan_click
     def __init__(self, img, img2, xy, plan_num, plan_me):
         self.img = img
         self.img2 = img2
@@ -109,16 +113,14 @@ class plan_icon_making():
             board.blit(self.img2, self.xy)
         else:
             board.blit(self.img, self.xy)
-    def click(self):
+    def event(self):
         global plan
         if plan[self.plan_me]!=self.plan_num:
             plan[self.plan_me]=self.plan_num
-            print(0)
         else:
             plan[self.plan_me]=0
-        print(self.blit)
-        self.blit()
-        update()
+        make_plan()
+
     
 
 
@@ -161,6 +163,7 @@ def status_window_open():
     board.blit(dung,(40,140))
 
 def make_plan():
+    global plan_click
     white_window.blit()
     blit_text(board, "3개 일정을 전부 체크하여 일정을 짜자.", font)
     name = font.render("일정표",True,(255,255,255))
@@ -176,6 +179,7 @@ def make_plan():
     e_strength_training_icon.blit()
     e_tec_training_icon.blit()
     e_hit_icon.blit()
+    
 def save_window():
     white_window.blit()
 
@@ -231,10 +235,16 @@ e_hit_icon = plan_icon_making(hit_icon_img, hit_icon_check_img, (200,170),4,1)
 
 plan_list = []
 
+plan_click = 0
+
 plan_list.append(m_hp_training_icon)
 plan_list.append(m_strength_training_icon)
 plan_list.append(m_tec_training_icon)
 plan_list.append(m_hit_icon)
+plan_list.append(e_hp_training_icon)
+plan_list.append(e_strength_training_icon)
+plan_list.append(e_tec_training_icon)
+plan_list.append(e_hit_icon)
 
 print(plan_list)
 
@@ -242,9 +252,9 @@ print(plan_list)
 update()
             
 while True:
+    print(plan_click)
     for event in pg.event.get():
         if event.type == pg.MOUSEBUTTONDOWN:
-
             if talk == True:
                 if text==[]:
                     board_start()
@@ -258,3 +268,11 @@ while True:
                 if button.col.collidepoint(mouse):
                     button.event()
                     update()
+                    if button == plan_button:
+                        plan_click=1
+            if plan_click==1:
+                for button in plan_list:
+                    if button.col.collidepoint(mouse):
+                        button.event()
+                        update()
+                        plan_click=1
