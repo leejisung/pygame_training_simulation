@@ -19,6 +19,26 @@ base_window = pg.image.load("base_window.png")
 close_button = pg.image.load("close_button.png")
 text_window = pg.image.load("white_460_110.png")
 
+hp_training_icon_img=pg.image.load("hp_training_icon.png")
+strength_training_icon_img=pg.image.load("strength_training_icon.png")
+tec_training_icon_img=pg.image.load("tec_training_icon.png")
+hit_icon_img=pg.image.load("hit_icon.png")
+hp_training_icon_check_img=pg.image.load("hp_training_icon_check.png")
+strength_training_icon_check_img=pg.image.load("strength_training_icon_check.png")
+tec_training_icon_check_img=pg.image.load("tec_training_icon_check.png")
+hit_icon_check_img=pg.image.load("hit_icon_check.png")
+
+hp_training_icon_img = pg.transform.scale(hp_training_icon_img,(50,50))
+strength_training_icon_img = pg.transform.scale(strength_training_icon_img,(50,50))
+tec_training_icon_img = pg.transform.scale(tec_training_icon_img,(50,50))
+hit_icon_img = pg.transform.scale(hit_icon_img,(50,50))
+hp_training_icon_check_img = pg.transform.scale(hp_training_icon_check_img,(50,50))
+strength_training_icon_check_img = pg.transform.scale(strength_training_icon_check_img,(50,50))
+tec_training_icon_check_img = pg.transform.scale(tec_training_icon_check_img,(50,50))
+hit_icon_check_img = pg.transform.scale(hit_icon_check_img,(50,50))
+
+
+
 
 board = pg.display.set_mode((500,500))
 board.blit(dark,(0,0))
@@ -72,6 +92,37 @@ class window_making(icon_making):
         close.event = close_window
         buttons.append(close)
         close.blit()
+        
+class plan_icon_making():
+    global plan
+    def __init__(self, img, img2, xy, plan_num, plan_me):
+        self.img = img
+        self.img2 = img2
+        self.xy = xy
+        self.x = xy[0]
+        self.y = xy[1]
+        self.col = img.get_rect(topleft= xy)
+        self.plan_num = plan_num
+        self.plan_me = plan_me
+    def blit(self):
+        if self.plan_num== plan[self.plan_me]:
+            board.blit(self.img2, self.xy)
+        else:
+            board.blit(self.img, self.xy)
+    def click(self):
+        global plan
+        if plan[self.plan_me]!=self.plan_num:
+            plan[self.plan_me]=self.plan_num
+            print(0)
+        else:
+            plan[self.plan_me]=0
+        print(self.blit)
+        self.blit()
+        update()
+    
+
+
+
 class data_making():
     def __init__(self):
         self.day = 1
@@ -113,6 +164,18 @@ def make_plan():
     white_window.blit()
     blit_text(board, "3개 일정을 전부 체크하여 일정을 짜자.", font)
     name = font.render("일정표",True,(255,255,255))
+    up_text = font.render("아침일정",True,(0,0,0))
+    down_text = font.render("저녁일정",True,(0,0,0))
+    board.blit(up_text,(50,50))
+    board.blit(down_text,(50,150))
+    m_hp_training_icon.blit()
+    m_strength_training_icon.blit()
+    m_tec_training_icon.blit()
+    m_hit_icon.blit()
+    e_hp_training_icon.blit()
+    e_strength_training_icon.blit()
+    e_tec_training_icon.blit()
+    e_hit_icon.blit()
 def save_window():
     white_window.blit()
 
@@ -153,6 +216,30 @@ update()
 text = []
 talk = False
 buttons =[status_button, talk_button, plan_button, save_button]
+
+plan = [0,0]
+m_hp_training_icon = plan_icon_making(hp_training_icon_img, hp_training_icon_check_img, (50,70),1,0)
+m_strength_training_icon = plan_icon_making(strength_training_icon_img, strength_training_icon_check_img, (100,70),2,0)
+m_tec_training_icon = plan_icon_making(tec_training_icon_img, tec_training_icon_check_img, (150,70),3,0)
+m_hit_icon = plan_icon_making(hit_icon_img, hit_icon_check_img, (200,70),4,0)
+
+e_hp_training_icon = plan_icon_making(hp_training_icon_img, hp_training_icon_check_img, (50,170),1,1)
+e_strength_training_icon = plan_icon_making(strength_training_icon_img, strength_training_icon_check_img, (100,170),2,1)
+e_tec_training_icon = plan_icon_making(tec_training_icon_img, tec_training_icon_check_img, (150,170),3,1)
+e_hit_icon = plan_icon_making(hit_icon_img, hit_icon_check_img, (200,170),4,1)
+
+
+plan_list = []
+
+plan_list.append(m_hp_training_icon)
+plan_list.append(m_strength_training_icon)
+plan_list.append(m_tec_training_icon)
+plan_list.append(m_hit_icon)
+
+print(plan_list)
+
+
+update()
             
 while True:
     for event in pg.event.get():
