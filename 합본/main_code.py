@@ -28,6 +28,8 @@ strength_training_icon_check_img=pg.image.load("strength_training_icon_check.png
 tec_training_icon_check_img=pg.image.load("tec_training_icon_check.png")
 hit_icon_check_img=pg.image.load("hit_icon_check.png")
 
+ok_img=pg.image.load("ok.png")
+
 hp_training_icon_img = pg.transform.scale(hp_training_icon_img,(50,50))
 strength_training_icon_img = pg.transform.scale(strength_training_icon_img,(50,50))
 tec_training_icon_img = pg.transform.scale(tec_training_icon_img,(50,50))
@@ -165,7 +167,7 @@ def status_window_open():
 def make_plan():
     global plan_click
     white_window.blit()
-    blit_text(board, "3개 일정을 전부 체크하여 일정을 짜자.", font)
+    blit_text(board, "아침저녁 일정을 전부 체크하여 일정을 짜자.", font)
     name = font.render("일정표",True,(255,255,255))
     up_text = font.render("아침일정",True,(0,0,0))
     down_text = font.render("저녁일정",True,(0,0,0))
@@ -179,6 +181,67 @@ def make_plan():
     e_strength_training_icon.blit()
     e_tec_training_icon.blit()
     e_hit_icon.blit()
+    ok_button.blit()
+
+def ok_click():
+    global plan
+    global text
+    global talk
+    global data
+    if plan[0] ==0 or plan[1]==0:
+        blit_text(board, "전부 채크해야 한다", font)
+        print("전부 채크해야 한다")
+    else:
+        data.day+=1
+        blit_text(board, "훈련을 시작했다", font)
+
+        if data.dung<30:
+            weight = 0.5
+        elif data.dung>79:
+            weight = 0.1
+        else:
+            weight = 1
+        if plan[0]==4:
+            data.dung = 0
+            text = text +["아침에는 먼지나게 팼다. 분충도가 0이 되었다."]
+        elif plan[0]==3:
+            print("w",weight)
+            tec_up = int(20*weight)
+            data.dung +=30
+            text = text +["아침 스파링 결과 기술이" +str(tec_up)+ "올랐고,  분충도가 30 올랐다."]
+        elif plan[0]==2:
+            strength_up = int(20*weight)
+            data.dung +=10
+            text = text +["아침 근력훈련 결과 힘이" +str(strength_up)+ "올랐고,  분충도가 30 올랐다."]
+        elif plan[0]==1:
+            hp_up = int(20*weight)
+            data.dung +=10
+            text = text +["아침 체력훈련 결과 HP가" +str(hp_up)+ "올랐고,  분충도가 30 올랐다."]
+        if data.dung<30:
+            weight = 0.5
+        elif data.dung>79:
+            weight = 0.1
+        else:
+            weight = 1
+        if plan[1]==4:
+            data.dung = 0
+            text = text +["저녁에는 먼지나게 팼다. 분충도가 0이 되었다."]
+        elif plan[1]==3:
+            print("w",weight)
+            tec_up = int(20*weight)
+            data.dung +=30
+            text = text +["저녁 스파링 결과 기술이" +str(tec_up)+ "올랐고,  분충도가 30 올랐다."]
+        elif plan[1]==2:
+            strength_up = int(20*weight)
+            data.dung +=10
+            text = text +["저녁 근력훈련 결과 힘이" +str(strength_up)+ "올랐고,  분충도가 10 올랐다."]
+        elif plan[1]==1:
+            hp_up = int(20*weight)
+            data.dung +=10
+            text = text +["저녁 체력훈련 결과 HP가" +str(hp_up)+ "올랐고,  분충도가 10 올랐다."]
+    talk = True
+
+        
     
 def save_window():
     white_window.blit()
@@ -232,6 +295,8 @@ e_strength_training_icon = plan_icon_making(strength_training_icon_img, strength
 e_tec_training_icon = plan_icon_making(tec_training_icon_img, tec_training_icon_check_img, (150,170),3,1)
 e_hit_icon = plan_icon_making(hit_icon_img, hit_icon_check_img, (200,170),4,1)
 
+ok_button = icon_making(ok_img, (150,250))
+ok_button.event = ok_click
 
 plan_list = []
 
@@ -245,14 +310,15 @@ plan_list.append(e_hp_training_icon)
 plan_list.append(e_strength_training_icon)
 plan_list.append(e_tec_training_icon)
 plan_list.append(e_hit_icon)
+plan_list.append(ok_button)
 
-print(plan_list)
+
+
 
 
 update()
             
 while True:
-    print(plan_click)
     for event in pg.event.get():
         if event.type == pg.MOUSEBUTTONDOWN:
             if talk == True:
@@ -262,6 +328,8 @@ while True:
                     talk = False
                 else:
                     blit_text(board, text[0], font)
+                    update()
+                    del text[0]
                 
             mouse = pg.mouse.get_pos()
             for button in buttons:
