@@ -29,6 +29,7 @@ tec_training_icon_check_img=pg.image.load("tec_training_icon_check.png")
 hit_icon_check_img=pg.image.load("hit_icon_check.png")
 
 ok_img=pg.image.load("ok.png")
+end_img=pg.image.load("end.png")
 
 hp_training_icon_img = pg.transform.scale(hp_training_icon_img,(50,50))
 strength_training_icon_img = pg.transform.scale(strength_training_icon_img,(50,50))
@@ -135,7 +136,7 @@ class data_making():
         self.tec = 5
         self.stress = 10
         self.dung = 50
-        self.day = 1
+
 
 def board_start():
     board.blit(dark,(0,0))
@@ -208,14 +209,17 @@ def ok_click():
             print("w",weight)
             tec_up = int(20*weight)
             data.dung +=30
+            data.tec+=tec_up
             text = text +["아침 스파링 결과 기술이" +str(tec_up)+ "올랐고,  분충도가 30 올랐다."]
         elif plan[0]==2:
             strength_up = int(20*weight)
             data.dung +=10
+            data.strength+=strength_up
             text = text +["아침 근력훈련 결과 힘이" +str(strength_up)+ "올랐고,  분충도가 30 올랐다."]
         elif plan[0]==1:
             hp_up = int(20*weight)
             data.dung +=10
+            data.hp+=hp_up
             text = text +["아침 체력훈련 결과 HP가" +str(hp_up)+ "올랐고,  분충도가 30 올랐다."]
         if data.dung<30:
             weight = 0.5
@@ -230,18 +234,30 @@ def ok_click():
             print("w",weight)
             tec_up = int(20*weight)
             data.dung +=30
+            data.tec+=tec_up
             text = text +["저녁 스파링 결과 기술이" +str(tec_up)+ "올랐고,  분충도가 30 올랐다."]
         elif plan[1]==2:
             strength_up = int(20*weight)
             data.dung +=10
+            data.strength+=strength_up
             text = text +["저녁 근력훈련 결과 힘이" +str(strength_up)+ "올랐고,  분충도가 10 올랐다."]
         elif plan[1]==1:
             hp_up = int(20*weight)
             data.dung +=10
+            data.hp+=hp_up
             text = text +["저녁 체력훈련 결과 HP가" +str(hp_up)+ "올랐고,  분충도가 10 올랐다."]
     talk = True
 
-        
+def ending():
+    global end
+    global text
+    ed_text = ["드디어 그 날이 왔다.", "후타바 공원 배 실장 격투기 대회. 위키세계어는 이 날을 위해 훈련해 왔다."]
+    if data.strength+data.hp+data.tec >250 and data.strength>70 and data.hp>70 and data.tec>70:
+        ed_text+=["위키세계어는 탈실장적 싸움실력으로 정상에 섰다.", "위키세계어의 우승을 확인한 우리들은 위키세계어를 기절시켰다.", "원래 우승한 실장석은 전골로 끓여먹는게 이 대회의 전통이었기 때문이다.", "그렇게 위키세계어는 나의 피가 되고 살이 되었다.", "고마워 위키세계어."]
+    else:
+        ed_text+=["위키세계어는 결국 지고 말았다. 팔 다리가 잘린 체로 나를 향해 무언가를 원하는 듯한 눈빛을 보냈다.", "살려주기라도 원하는 건가?", "빠직!", "나는 그 자리에서 위키세계어를 신발로 뭉개버렸다.", "쓸모없는 녀석"]
+    text+=ed_text
+    end = 1
     
 def save_window():
     white_window.blit()
@@ -315,12 +331,17 @@ plan_list.append(ok_button)
 
 
 
-
+end = 0
 update()
             
 while True:
     for event in pg.event.get():
         if event.type == pg.MOUSEBUTTONDOWN:
+            if text==[] and end ==1:
+                board.blit(end_img,(0,0))
+                pg.display.update()
+            if data.day == 10 and end == 0:
+                ending()
             if talk == True:
                 if text==[]:
                     board_start()
